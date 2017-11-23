@@ -1,0 +1,7 @@
+usr/bin/exo-boricj
+usr/bin/exo-boricj-client
+etc/exo-boricj/exo-boricj.cfg
+lib/systemd/system/exo-boricj.service
+etc/exo-boricj/exo-boricj-client.cfg
+lib/systemd/system/exo-boricj-client.service
+

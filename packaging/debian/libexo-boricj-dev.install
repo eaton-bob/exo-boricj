@@ -1,0 +1,3 @@
+usr/include/*
+usr/lib/*/libexo_boricj.so
+usr/lib/*/pkgconfig/libexo_boricj.pc
