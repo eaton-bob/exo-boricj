@@ -1,9 +1,11 @@
 # exo_boricj
 This is a sample agent for servicing the lyrics of the_99 bottles of beer_ song:
 
-```99 bottles of beer on the wall, 99 bottles of beer,
+```
+99 bottles of beer on the wall, 99 bottles of beer,
 take one down, pass it around, 98 bottles of beer on the wall.
-98 bottles of beer on the wall, 98 bottles of beer...```
+98 bottles of beer on the wall, 98 bottles of beer...
+```
 
 ## Protocol
 The agent expects messages with `bottles` as a subject. Each part of the message
