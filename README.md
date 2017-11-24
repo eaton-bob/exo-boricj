@@ -1,9 +1,10 @@
 # exo_boricj
-This is a sample agent for servicing the lyrics of the_99 bottles of beer_ song:
+This is a sample agent for servicing the lyrics of the _99 bottles of beer_ song:
 
 ```
 99 bottles of beer on the wall, 99 bottles of beer,
-take one down, pass it around, 98 bottles of beer on the wall.
+Take one down, pass it around, 98 bottles of beer on the wall.
+
 98 bottles of beer on the wall, 98 bottles of beer...
 ```
 
