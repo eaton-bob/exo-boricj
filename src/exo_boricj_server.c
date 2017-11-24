@@ -78,16 +78,38 @@ s_handle (mlm_client_t *client, zmsg_t *message, int had_beers)
                 char buf[128];
 
                 // Write first lyric.
-                snprintf (buf, sizeof(buf), "%d bottles of beer on the wall, %d bottles of beer",
-                         bottles, bottles
-                );
+                switch (bottles) {
+                    case 0:
+                        snprintf (buf, sizeof(buf), "No more bottles of beer on the wall, no more bottles of beer,");
+                        break;
+                    default:
+                        snprintf (buf, sizeof(buf), "%d bottle%s of beer on the wall, %d bottle%s of beer,",
+                                bottles, (bottles > 1) ? "s" : "", bottles, (bottles > 1) ? "s" : ""
+                        );
+                        break;
+                }
                 zmsg_addstr (reply_message, buf);
 
                 // Write second lyric.
-                snprintf (buf, sizeof(buf), "take one down, pass it around, %d bottles of beer on the wall",
-                         bottles-1
-                );
+                switch (bottles) {
+                    case 1:
+                        snprintf (buf, sizeof(buf), "Take one down, pass it around, no more bottles of beer on the wall.");
+                        break;
+                    case 0:
+                        snprintf (buf, sizeof(buf), "Go to the store and buy some more, 99 bottles of beer on the wall.");
+                        break;
+                    default:
+                        snprintf (buf, sizeof(buf), "Take one down, pass it around, %d bottle%s of beer on the wall.",
+                                bottles-1, (bottles-1 > 1) ? "s" : ""
+                        );
+                        break;
+                }
                 zmsg_addstr (reply_message, buf);
+
+                // Add extra newline if required.
+                if (bottles > 0) {
+                    zmsg_addstr (reply_message, "\n");
+                }
             }
             else {
                 zsys_warning ("Invalid bottles of beer payload in message");
@@ -249,14 +271,43 @@ exo_boricj_server_test_check_response (zmsg_t *message, int i)
     char *ret;
 
     assert(ret = zmsg_popstr (message));
-    snprintf (buf, sizeof(buf), "%d bottles of beer on the wall, %d bottles of beer", i, i);
+    switch (i) {
+        case 1:
+            snprintf (buf, sizeof(buf), "1 bottle of beer on the wall, 1 bottle of beer,");
+            break;
+        case 0:
+            snprintf (buf, sizeof(buf), "No more bottles of beer on the wall, no more bottles of beer,");
+            break;
+        default:
+            snprintf (buf, sizeof(buf), "%d bottles of beer on the wall, %d bottles of beer,", i, i);
+            break;
+    }
     assert (streq (ret, buf));
     zstr_free (&ret);
 
     assert(ret = zmsg_popstr (message));
-    snprintf (buf, sizeof(buf), "take one down, pass it around, %d bottles of beer on the wall", i-1);
+    switch (i) {
+        case 2:
+            snprintf (buf, sizeof(buf), "Take one down, pass it around, 1 bottle of beer on the wall.");
+            break;
+        case 1:
+            snprintf (buf, sizeof(buf), "Take one down, pass it around, no more bottles of beer on the wall.");
+            break;
+        case 0:
+            snprintf (buf, sizeof(buf), "Go to the store and buy some more, 99 bottles of beer on the wall.");
+            break;
+        default:
+            snprintf (buf, sizeof(buf), "Take one down, pass it around, %d bottles of beer on the wall.", i-1);
+            break;
+    }
     assert (streq (ret, buf));
     zstr_free (&ret);
+
+    if (i > 0) {
+        assert(ret = zmsg_popstr (message));
+        assert (streq (ret, "\n"));
+        zstr_free (&ret);
+    }
 }
 
 void
@@ -292,7 +343,7 @@ exo_boricj_server_test (bool verbose)
     for (int type = 0; type < 2; type++) {
         // Play the song.
         for (int i = 99; i >= 0; i -= j) {
-            j = (i < 3) ? 1 : i/2;
+            j = (i > 1) ? i/2 : 1;
 
             zmsg_t *message = zmsg_new ();
             for (int k = i; k > i-j; k--) {
